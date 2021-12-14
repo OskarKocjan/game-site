@@ -1,3 +1,5 @@
+// import { createInsertQuery } from './queryBuilder.js';
+
 const dotenv = require('dotenv');
 dotenv.config({ path: './.env' });
 
@@ -6,6 +8,7 @@ const mysql = require('mysql');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const queryBuilder = require('./queryBuilder');
 
 const PORT = 8080 || process.env.PORT;
 
@@ -47,12 +50,33 @@ app.post('/register', (req, res) => {
   console.log(req.body);
 
   const { email, nick, password } = req.body;
+  const table = 'users';
 
-  const queryNick = 'SELECT * FROM users WHERE nick = ?';
+  // const queryNick = 'SELECT * FROM users WHERE nick = ?';
+  const queryNick = queryBuilder.createSelectQuery(
+    ['*'],
+    table,
+    ['nick'],
+    ['=']
+  );
+  console.log(queryNick);
 
-  const queryEmail = 'SELECT * FROM users WHERE email = ?';
+  // const queryEmail = 'SELECT * FROM users WHERE email = ?';
+  const queryEmail = queryBuilder.createSelectQuery(
+    ['*'],
+    table,
+    ['email'],
+    ['=']
+  );
+  console.log(queryEmail);
 
-  const queryReg = 'INSERT INTO users (nick, email, password) VALUES (?,?,?)';
+  // const queryReg = 'INSERT INTO users (nick, email, password) VALUES (?,?,?)';
+  const queryReg = queryBuilder.createInsertQuery(table, [
+    'nick',
+    'email',
+    'password',
+  ]);
+  console.log(queryReg);
 
   db.query(queryNick, [nick], (errNick, resultNick) => {
     if (errNick) {
@@ -92,7 +116,13 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, response) => {
   const { email, password } = req.body;
 
-  const query = 'SELECT * FROM users WHERE email = ?';
+  // const query = 'SELECT * FROM users WHERE email = ?';
+  const query = queryBuilder.createSelectQuery(
+    ['*'],
+    'users',
+    ['email'],
+    ['=']
+  );
 
   db.query(query, [email, password], (err, result) => {
     if (err) {
@@ -146,12 +176,12 @@ app.post('/add_game', (req, res) => {
 
   const queryId = 'SELECT id FROM users WHERE nick = ?';
 
-  let checkIfExist = 'SELECT * FROM Games WHERE users_id = ? AND title = ?';
+  let checkIfExist = 'SELECT * FROM games WHERE users_id = ? AND title = ?';
 
   let insertGameQuery =
-    'INSERT INTO Games (image, title, status, rate, users_id) VALUES (?,?,?,?,?)';
+    'INSERT INTO games (image, title, status, rate, users_id) VALUES (?,?,?,?,?)';
 
-  if (tableName !== 'Games' && tableName !== 'favourites') {
+  if (tableName !== 'games' && tableName !== 'favourites') {
     finalName = namePubOrDev;
     finalImg = imagePubOrDev;
     finalStatus = slug;
@@ -189,21 +219,42 @@ app.post('/add_game', (req, res) => {
 });
 
 app.post('/delete', (req, res) => {
-  const { table, id, name } = req.body;
+  const { table, nick, name } = req.body;
 
-  let deleteQuery = 'DELETE FROM Games WHERE title = ? and users_id = ?';
-  if (table === 'favourites') {
-    let deleteQuery = 'DELETE FROM favourites WHERE title = ? and users_id = ?';
-  } else if (table === 'developers') {
-    let deleteQuery = 'DELETE FROM developers WHERE name = ? and users_id = ?';
-  } else if (table === 'publishers') {
-    let deleteQuery = 'DELETE FROM developers WHERE name = ? and users_id = ?';
-  }
+  // let deleteQuery = 'DELETE FROM games WHERE title = ? and users_id = ?';
+  // if (table === 'favourites') {
+  //   let deleteQuery = 'DELETE FROM favourites WHERE title = ? and users_id = ?';
+  // } else if (table === 'developers') {
+  //   let deleteQuery = 'DELETE FROM developers WHERE name = ? and users_id = ?';
+  // } else if (table === 'publishers') {
+  //   let deleteQuery = 'DELETE FROM developers WHERE name = ? and users_id = ?';
+  // }
 
-  db.query(deleteQuery, [name, id], (errDelete, resultDelete) => {
-    console.log(errInsert);
-    console.log(resultInsert);
-    res.send();
+  const titleOrName =
+    table === 'favourites' || table === 'games' ? 'title' : 'name';
+
+  const selectUserId = queryBuilder.createSelectQuery(
+    ['id'],
+    'users',
+    ['nick'],
+    ['=']
+  );
+
+  const deleteQuery = queryBuilder.createDeleteQuery(
+    table,
+    [titleOrName, 'users_id'],
+    ['=', '='],
+    ['AND']
+  );
+
+  db.query(selectUserId, [nick], (errId, resultId) => {
+    console.log(errId);
+
+    db.query(deleteQuery, [name, resultId[0].id], (errDelete, resultDelete) => {
+      console.log(errDelete);
+      console.log(resultDelete);
+      res.send({ name });
+    });
   });
 });
 
@@ -230,7 +281,8 @@ app.get('/check/auth', authenticate, (req, res) => {
 // endpoint responsible for getting user data
 app.get('/user/:userNick', (req, res) => {
   const nick = req.params.userNick;
-  const query = 'SELECT * FROM users WHERE nick = ?';
+  // const query = 'SELECT * FROM users WHERE nick = ?';
+  const query = queryBuilder.createSelectQuery(['*'], 'users', ['nick'], ['=']);
   db.query(query, [nick], (err, result) => {
     res.send(result);
   });
@@ -316,7 +368,7 @@ app.get('/my-games/:userNick', (req, res) => {
   const queryId = 'SELECT id FROM users WHERE nick = ?';
 
   const gamesQuery =
-    'SELECT image, title, status, rate FROM Games WHERE users_id = ?;';
+    'SELECT image, title, status, rate FROM games WHERE users_id = ?;';
   const developersQuery =
     'SELECT image, name, slug, rate FROM developers WHERE users_id = ?;';
   const publishersQuery =

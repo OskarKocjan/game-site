@@ -98,7 +98,7 @@ const GameSelectModal = ({ show, chosenGame, onHide }) => {
                 <p
                   className='add_p'
                   onClick={
-                    userData.isLogged && (() => handleAdding('Games', 'none'))
+                    userData.isLogged && (() => handleAdding('games', 'none'))
                   }
                 >
                   Add to game list

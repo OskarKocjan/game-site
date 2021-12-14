@@ -6,7 +6,7 @@ import { StoreContext } from '../store/StoreProvider';
 
 const LIST_TYPE = {
   Games: 'Games',
-  Devs: 'Devs',
+  Devs: 'Developers',
   Publishers: 'Publishers',
   Favourites: 'Favourites',
 };
@@ -31,12 +31,52 @@ const MyGamesPage = () => {
     });
   }, []);
 
+  const handleDelete = (item) => {
+    console.log(item, current, userData.nick);
+    Axios.post(`${BASE_URL}/delete`, {
+      table: current.toLocaleLowerCase(),
+      nick: userData.nick,
+      name: item.title || item.name,
+    }).then((res) => {
+      console.log(res);
+      const name = res.data.name;
+      switch (current) {
+        case LIST_TYPE.Games:
+          setGamesDetails(filterOut(games, name));
+          break;
+        case LIST_TYPE.Devs:
+          setDevelopers(filterOut(developers, name));
+          break;
+        case LIST_TYPE.Publishers:
+          setPublishers(filterOut(publishers, name));
+          break;
+        case LIST_TYPE.Favourites:
+          setFavourites(filterOut(favourites, name));
+          break;
+        default:
+          console.log('nothing');
+      }
+    });
+  };
+
+  const filterOut = (array, name) => {
+    return array.filter((item) => (item.title || item.name) !== name);
+  };
+
   const listResult = (result) => {
     return result.map((item, idx) => {
       return (
         <div className='results-top-bar'>
           <p className='results-game-num'>{idx}</p>
           <p className='results-game-miniature'>
+            <button
+              className='btn'
+              onClick={() => {
+                handleDelete(item);
+              }}
+            >
+              x
+            </button>
             <img src={item.image} alt='Game Miniature' />
           </p>
           <p className='results-title'>{item.title || item.name}</p>

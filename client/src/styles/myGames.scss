@@ -97,6 +97,7 @@
 
     .results-game-miniature {
       flex: 2;
+      position: relative;
 
       img {
         margin-bottom: 10px;
@@ -106,6 +107,16 @@
         height: 50px;
         width: 100%;
         object-fit: cover;
+      }
+      .btn {
+        position: absolute;
+        top: 10%;
+        left: 5%;
+        transform: translate(-55%, -60%);
+        -ms-transform: translate(-50%, -50%);
+        color: $registerFormBg;
+        border: none;
+        cursor: pointer;
       }
     }
 
