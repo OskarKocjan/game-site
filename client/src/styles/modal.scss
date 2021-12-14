@@ -1,0 +1,119 @@
+@import 'global';
+
+.content {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.modal-header {
+  margin-top: 2rem;
+  align-self: center;
+  background-color: $mainPageColor;
+  color: $bgWhite;
+  width: 75%;
+  border-radius: 20px;
+}
+
+.modal-title {
+  align-content: center;
+  margin-left: auto;
+}
+
+.modal-body h4 {
+  width: 50rem;
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 115%;
+  align-items: left;
+  text-align: left;
+  letter-spacing: -0.019em;
+  color: #111144;
+  margin-top: 17px;
+  margin-bottom: 17px;
+  border-bottom: 1px solid #d4d3d3;
+}
+
+.modal-body p {
+  font-weight: 500;
+  margin-left: 0.618rem;
+}
+
+.modal-body li {
+  margin-left: 1.5rem;
+  border-bottom: none;
+  margin-bottom: 0.5rem;
+}
+
+.modal-body a {
+  margin-left: 0.618rem;
+}
+
+.modal-img {
+  margin-bottom: 10px;
+  border-radius: 10px;
+  display: block;
+  height: 300px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.add_p {
+  border-bottom: 1px solid $mainPageColor;
+  color: $mainPageColor;
+  font-size: 14px;
+  line-height: 115%;
+  text-align: center;
+  letter-spacing: -0.019em;
+  height: 1.5rem;
+  padding-top: 0.25rem;
+  transition: 0.3s;
+
+  &:hover {
+    cursor: default;
+    background-color: $mainPageColor;
+    color: $bgWhite;
+    border-radius: 5px;
+  }
+}
+
+.score {
+  color: #ffffff;
+  font-size: 28px;
+  height: 3rem;
+  text-align: center;
+  align-self: center;
+  background-color: $mainPageColor;
+  color: $bgWhite;
+  width: 100%;
+  border-radius: 10px;
+}
+
+img {
+  width: 50%;
+  margin-bottom: 10px;
+}
+
+.p_rating {
+  display: center;
+  font-size: 2.5rem;
+}
+
+.close-button {
+  background-color: transparent;
+  margin-right: 10px;
+  padding: 5px 20px 5px 20px;
+  border-radius: 8px;
+  border: 2px solid $mainPageColor;
+  color: $mainPageColor;
+  transition: 0.3s;
+
+  &:hover {
+    box-shadow: 0 0 10px $shadowColor;
+    background-color: $bgWhite;
+    color: $mainPageColor;
+    border: 2px solid $mainPageColor;
+  }
+}
+
+.modal-footer {
+  border-top: 0px;
+}

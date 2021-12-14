@@ -1,0 +1,57 @@
+@import "global";
+
+$bgWhite: #fefefe;
+$clearWhite: #ffffff;
+$lightGray: lightgray;
+$black: #000;
+
+
+.menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: $navHeight;
+  background-color: $bgWhite;
+}
+
+.menu-btns-wrapper{
+  display: flex;
+}
+
+.site-logo {
+  margin-left: 3%;
+  padding: 5px;
+}
+
+.logo-img{
+  width: 100px;
+  height: 100%;
+}
+
+.logo-text{
+  color: $black;
+  font-size: 2.2em;
+}
+
+.logo-link:hover{
+  text-decoration: none;
+}
+
+
+.menu-button {
+  background-color: transparent;
+  margin-right: 10px;
+  padding: 5px 20px 5px 20px;
+  border-radius: 8px;
+  border: 2px solid $mainPageColor;
+  color: $mainPageColor;
+  transition: .3s;
+}
+
+.menu-button:hover{
+  box-shadow: 0 0 10px $shadowColor;
+}
+
+Modal.Footer{
+  border-top: 0px;
+}

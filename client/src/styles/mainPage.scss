@@ -1,0 +1,104 @@
+@import "global";
+
+.main-content {
+  display: flex;
+  background-color: $mainPageColor;
+  height:$mainContentHeight;
+  color: black;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* Results list*/
+.games-results-list {
+  display: flex;
+  justify-content: center;
+  width: 90%;
+}
+
+.games-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.inner-col-wrapper{
+  background-color: $bgWhite;
+  border-radius: 10px;
+  margin-top: 20px;
+  transition: 0.5s;
+
+
+  &:hover{
+    box-shadow: 0px 0px 10px $bgWhite;
+    cursor: pointer;
+  }
+
+}
+
+
+.game-miniature {
+  margin-bottom: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  display: block;
+  height: 300px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.game-title{
+  text-align: center;
+}
+
+
+/* Search bar */
+.search-bar-container{
+  display: flex;
+  height: 100px;
+  width: 40%;
+  margin: 30px 0px 30px 0px;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.search-bar{
+width: 90%;
+font-size: 28px;
+padding: 5px;
+padding-left: 10px;
+border-radius: 10px;
+border: 0px;
+transition: .3s;
+
+
+  &:hover{
+    box-shadow: 0 0 5pt 0.5pt $bgWhite;
+  }
+
+  &:focus {
+    box-shadow: 0 0 5pt 2pt $bgWhite;
+    outline-width: 0px;
+  }
+
+  &::placeholder{
+    color:rgba(94, 91, 91, 0.466);
+  }
+
+}
+
+
+.loading-message{
+  color:#fff;
+  font-size: 2.5rem;
+}
+
+
+
+
+
+

@@ -1,0 +1,130 @@
+@import 'global';
+
+.my-games-page-container {
+  display: flex;
+  background-color: $mainPageColor;
+  font-family: 'Montserrat', sans-serif;
+  justify-content: center;
+}
+
+.my-games-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 45vw;
+  margin-top: 3%;
+  background-color: $bgWhite;
+  box-shadow: 0px 0px 3px 3px $bgWhite;
+}
+
+.content-header {
+  display: flex;
+  flex-direction: column;
+  padding: 40px 50px;
+  width: 100%;
+  height: 400px;
+
+  .content-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    font-weight: 500;
+    border-radius: 33px;
+    height: 70%;
+    color: $bgWhite;
+    background-color: $mainPageColor;
+  }
+
+  .my-games-menu-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20%;
+    margin-top: 20px;
+    padding: 0px 40px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid lightgrey;
+
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: space-between;
+      list-style-type: none;
+      margin: 0;
+
+      li {
+        font-size: 1.2rem;
+      }
+      li:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.chosen-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+  background-color: $mainPageColor;
+  color: $bgWhite;
+  box-shadow: 0px 0px 2px 2px $bgWhite inset;
+  p {
+    margin: 0;
+    font-size: 2rem;
+  }
+}
+
+.my-games-result {
+  width: 100%;
+
+  .results-top-bar {
+    display: flex;
+    p {
+      display: flex;
+      align-items: center;
+    }
+
+    .results-game-num {
+      flex: 1;
+    }
+
+    .results-game-miniature {
+      flex: 2;
+
+      img {
+        margin-bottom: 10px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        display: block;
+        height: 50px;
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .results-title {
+      flex: 10;
+    }
+
+    .results-game-status {
+      flex: 2;
+    }
+
+    .results-game-rate {
+      flex: 2;
+    }
+  }
+}
+
+.no-results-found {
+  color: #fff;
+  font-size: 2.5rem;
+  align-items: center;
+}

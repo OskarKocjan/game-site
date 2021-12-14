@@ -1,0 +1,14 @@
+@import "global";
+
+.error-page{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:$mainContentHeight;
+    background-color:$mainPageColor;
+}
+
+.error-message{
+    color:#fff;
+    font-size: 2.5rem;
+}
