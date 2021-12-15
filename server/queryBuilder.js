@@ -10,7 +10,7 @@ const createInsertQuery = (table, columns) => {
   valuesNames = valuesNames.slice(0, -1);
   columnNames = columnNames.slice(0, -1);
 
-  return `INSERT INTO ${table} (${columnNames}) VALUES (${valuesNames})`;
+  return `INSERT INTO ${table} (${columnNames}) VALUES (${valuesNames});`;
 };
 
 const createUpdateQuery = (
@@ -35,7 +35,7 @@ const createUpdateQuery = (
     }
   }
 
-  return `UPDATE ${table} SET ${valuesToSetNames}WHERE ${afterWhereConditions}`;
+  return `UPDATE ${table} SET ${valuesToSetNames}WHERE ${afterWhereConditions};`;
 };
 
 const createSelectQuery = (
@@ -60,7 +60,7 @@ const createSelectQuery = (
     }
   }
 
-  return `SELECT ${valuesToSelectNames} FROM ${table} WHERE ${afterWhereConditions}`;
+  return `SELECT ${valuesToSelectNames} FROM ${table} WHERE ${afterWhereConditions};`;
 };
 
 const createDeleteQuery = (
@@ -78,7 +78,7 @@ const createDeleteQuery = (
     }
   }
 
-  return `DELETE FROM ${table} WHERE ${afterWhereConditions}`;
+  return `DELETE FROM ${table} WHERE ${afterWhereConditions};`;
 };
 
 module.exports = {

@@ -52,7 +52,6 @@ app.post('/register', (req, res) => {
   const { email, nick, password } = req.body;
   const table = 'users';
 
-  // const queryNick = 'SELECT * FROM users WHERE nick = ?';
   const queryNick = queryBuilder.createSelectQuery(
     ['*'],
     table,
@@ -61,7 +60,6 @@ app.post('/register', (req, res) => {
   );
   console.log(queryNick);
 
-  // const queryEmail = 'SELECT * FROM users WHERE email = ?';
   const queryEmail = queryBuilder.createSelectQuery(
     ['*'],
     table,
@@ -70,7 +68,6 @@ app.post('/register', (req, res) => {
   );
   console.log(queryEmail);
 
-  // const queryReg = 'INSERT INTO users (nick, email, password) VALUES (?,?,?)';
   const queryReg = queryBuilder.createInsertQuery(table, [
     'nick',
     'email',
@@ -116,7 +113,6 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, response) => {
   const { email, password } = req.body;
 
-  // const query = 'SELECT * FROM users WHERE email = ?';
   const query = queryBuilder.createSelectQuery(
     ['*'],
     'users',
@@ -170,30 +166,42 @@ app.post('/add_game', (req, res) => {
     slug,
   } = req.body;
 
-  let finalName = title;
-  let finalImg = gameImage;
-  let finalStatus = status;
+  let finalName;
+  let finalImg;
+  let finalStatus;
+  let where;
+  const equals = ['=', '='];
 
-  const queryId = 'SELECT id FROM users WHERE nick = ?';
+  const queryId = queryBuilder.createSelectQuery(
+    ['id'],
+    'users',
+    ['nick'],
+    ['=']
+  );
 
-  let checkIfExist = 'SELECT * FROM games WHERE users_id = ? AND title = ?';
-
-  let insertGameQuery =
-    'INSERT INTO games (image, title, status, rate, users_id) VALUES (?,?,?,?,?)';
-
-  if (tableName !== 'games' && tableName !== 'favourites') {
+  if (tableName === 'games' || tableName === 'favourites') {
+    finalName = title;
+    finalImg = gameImage;
+    finalStatus = status;
+    where = ['users_id', 'title'];
+    what = ['image', 'title', 'status', 'rate', 'users_id'];
+  } else {
     finalName = namePubOrDev;
     finalImg = imagePubOrDev;
     finalStatus = slug;
-
-    checkIfExist = `SELECT * FROM ${tableName} WHERE users_id = ? AND name = ?`;
-
-    insertGameQuery = `INSERT INTO ${tableName} (image, name, slug, rate, users_id) VALUES (?,?,?,?,?)`;
-  } else if (tableName === 'favourites') {
-    checkIfExist = 'SELECT * FROM favourites WHERE users_id = ? AND title = ?';
-    insertGameQuery =
-      'INSERT INTO favourites (image, title, status, rate, users_id) VALUES (?,?,?,?,?)';
+    where = ['users_id', 'name'];
+    what = ['image', 'name', 'slug', 'rate', 'users_id'];
   }
+
+  const checkIfExist = queryBuilder.createSelectQuery(
+    ['*'],
+    tableName,
+    where,
+    equals,
+    ['AND']
+  );
+  const insertGameQuery = queryBuilder.createInsertQuery(tableName, what);
+
   db.query(queryId, [nick], (errId, resultId) => {
     db.query(
       checkIfExist,
@@ -220,15 +228,6 @@ app.post('/add_game', (req, res) => {
 
 app.post('/delete', (req, res) => {
   const { table, nick, name } = req.body;
-
-  // let deleteQuery = 'DELETE FROM games WHERE title = ? and users_id = ?';
-  // if (table === 'favourites') {
-  //   let deleteQuery = 'DELETE FROM favourites WHERE title = ? and users_id = ?';
-  // } else if (table === 'developers') {
-  //   let deleteQuery = 'DELETE FROM developers WHERE name = ? and users_id = ?';
-  // } else if (table === 'publishers') {
-  //   let deleteQuery = 'DELETE FROM developers WHERE name = ? and users_id = ?';
-  // }
 
   const titleOrName =
     table === 'favourites' || table === 'games' ? 'title' : 'name';
@@ -297,8 +296,14 @@ app.put('/user/:userNick', (req, res) => {
   let criteriaArray;
 
   if (Boolean(newPassword)) {
-    query =
-      'UPDATE users SET nick = ?, description = ?, password = ? WHERE nick = ?';
+    // query =
+    //   'UPDATE users SET nick = ?, description = ?, password = ? WHERE nick = ?';
+    query = queryBuilder.createUpdateQuery(
+      'users',
+      ['nick', 'description', 'password'],
+      ['nick'],
+      ['=']
+    );
 
     bcrypt.hash(newPassword, 10, (err, newHashedPassword) => {
       db.query(
@@ -312,7 +317,13 @@ app.put('/user/:userNick', (req, res) => {
       );
     });
   } else {
-    query = 'UPDATE users SET nick = ?, description = ? WHERE nick = ?';
+    // query = 'UPDATE users SET nick = ?, description = ? WHERE nick = ?';
+    query = queryBuilder.createUpdateQuery(
+      'users',
+      ['nick', 'description'],
+      ['nick'],
+      ['=']
+    );
     criteriaArray = [nickToChange, userDescription, nick];
 
     db.query(query, criteriaArray, (err, result) => {
@@ -335,7 +346,8 @@ app.put('/user/:userNick', (req, res) => {
 // endpoint responsible for checking if nick to be changed is not already used
 app.get('/change/nick/:userNick', (req, res) => {
   const nick = req.params.userNick;
-  const query = 'SELECT * FROM users WHERE nick = ?';
+  // const query = 'SELECT * FROM users WHERE nick = ?';
+  const query = queryBuilder.createSelectQuery(['*'], 'users', ['nick'], ['=']);
   db.query(query, [nick], (err, result) => {
     res.send(!Boolean(result.length));
   });
@@ -345,7 +357,8 @@ app.get('/change/nick/:userNick', (req, res) => {
 app.post('/change/password/', (req, response) => {
   const { nick, oldPassword } = req.body;
 
-  const query = 'SELECT * FROM users WHERE nick = ?';
+  // const query = 'SELECT * FROM users WHERE nick = ?';
+  const query = queryBuilder.createSelectQuery(['*'], 'users', ['nick'], ['=']);
 
   db.query(query, [nick], (err, result) => {
     if (err) {
@@ -365,17 +378,44 @@ app.post('/change/password/', (req, response) => {
 
 app.get('/my-games/:userNick', (req, res) => {
   const nick = req.params.userNick;
-  const queryId = 'SELECT id FROM users WHERE nick = ?';
 
-  const gamesQuery =
-    'SELECT image, title, status, rate FROM games WHERE users_id = ?;';
-  const developersQuery =
-    'SELECT image, name, slug, rate FROM developers WHERE users_id = ?;';
-  const publishersQuery =
-    'SELECT image, name, slug, rate FROM publishers WHERE users_id = ?;';
+  const gamesAndFav = ['image', 'title', 'status', 'rate'];
+  const devAndPub = ['image', 'name', 'slug', 'rate'];
+  const where = ['users_id'];
+  const queryId = queryBuilder.createSelectQuery(
+    ['id'],
+    'users',
+    ['nick'],
+    ['=']
+  );
 
-  const favouritesQuery =
-    'SELECT image, title, status, rate FROM favourites WHERE users_id = ?';
+  const gamesQuery = queryBuilder.createSelectQuery(
+    gamesAndFav,
+    'games',
+    where,
+    ['=']
+  );
+
+  const developersQuery = queryBuilder.createSelectQuery(
+    devAndPub,
+    'developers',
+    where,
+    ['=']
+  );
+
+  const publishersQuery = queryBuilder.createSelectQuery(
+    devAndPub,
+    'publishers',
+    where,
+    ['=']
+  );
+
+  const favouritesQuery = queryBuilder.createSelectQuery(
+    gamesAndFav,
+    'favourites',
+    where,
+    ['=']
+  );
 
   db.query(queryId, [nick], (errId, resultId) => {
     const whereArray = [
