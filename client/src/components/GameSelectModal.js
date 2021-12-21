@@ -1,46 +1,98 @@
-import Axios from 'axios';
-import React, { useContext, useState } from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import { StoreContext } from '../store/StoreProvider';
+import Axios from "axios";
+import React, { useContext, useState, useEffect } from "react";
+import { Modal, Button } from "react-bootstrap";
+import { StoreContext } from "../store/StoreProvider";
+import "../styles/modal.scss";
 // import { userData } from '../pages/LoginPage';
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = "http://localhost:8080";
 
-const GameSelectModal = ({ show, chosenGame, onHide }) => {
+const GameSelectModal = ({
+  show,
+  chosenGame,
+  onHide,
+  myGameLists,
+  deleteFunc,
+  contains,
+}) => {
+  console.log(myGameLists);
+
   const [devStatus, setDevStatus] = useState(true);
   const [publisherStatus, setPublisherStatus] = useState(true);
-  const [devStatusText, setDevStatusText] = useState('none');
-  const [publisherStatusText, setPublisherStatusText] = useState('none');
+  const [devStatusText, setDevStatusText] = useState("none");
+  const [publisherStatusText, setPublisherStatusText] = useState("none");
+
+  useEffect(() => {
+    setDevStatus(true);
+    setPublisherStatus(true);
+    setDevStatusText("none");
+    setPublisherStatusText("none");
+  }, [chosenGame]);
 
   const { userData } = useContext(StoreContext);
   const handleAdding = (table, name, image) => {
     Axios.post(`${BASE_URL}/add_game`, {
-      gameImage: chosenGame.background_image,
-      title: chosenGame.name,
-      status: 'Played',
+      img: image,
+      title: name,
+      status: "Played",
       rate: chosenGame.rating,
       nick: userData.nick,
       tableName: table,
-      namePubOrDev: name,
-      imagePubOrDev: image,
-      slug: name.replace(/\s/g, '-').toLowerCase(),
-    }).then((res) => {});
+      slug: name.replace(/\s/g, "-").toLowerCase(),
+    }).then((res) => {
+      console.log("handle Adding ");
+      console.log(res.data);
+      let tableNameGames;
+      let objToPush = {};
+      const { img, title, finalStatus, rate, tableName } = res.data;
+      if (tableName === "games") tableNameGames = "myGames";
+
+      if (tableName === "games" || tableName === "favourites") {
+        objToPush = {
+          image: img,
+          title: title,
+          status: finalStatus,
+          rate: rate,
+        };
+      } else {
+        objToPush = {
+          image: img,
+          name: title,
+          slug: finalStatus,
+          rate: rate,
+        };
+      }
+
+      myGameLists[tableNameGames || tableName].push(objToPush);
+    });
+  };
+
+  const addOrRemove = (table, name, image) => {
+    let tableName;
+    let item;
+    if (table === "games") tableName = "myGames";
+    console.log(table);
+    if ((item = contains(myGameLists[tableName || table], name))) {
+      deleteFunc(item, table[0].toUpperCase() + table.slice(1));
+    } else {
+      handleAdding(table, name, image);
+    }
   };
 
   const changeState = (option) => {
-    if (option === 'dev') {
+    if (option === "dev") {
       setDevStatus(!devStatus);
       if (devStatus) {
-        setDevStatusText('block');
+        setDevStatusText("block");
       } else {
-        setDevStatusText('none');
+        setDevStatusText("none");
       }
     } else {
       setPublisherStatus(!publisherStatus);
       if (publisherStatus) {
-        setPublisherStatusText('block');
+        setPublisherStatusText("block");
       } else {
-        setPublisherStatusText('none');
+        setPublisherStatusText("none");
       }
     }
   };
@@ -60,9 +112,9 @@ const GameSelectModal = ({ show, chosenGame, onHide }) => {
       <>
         {chosenGame[props].map((p) => (
           <li
-            className='add_p'
+            className="add_p"
             key={p.name}
-            onClick={() => handleAdding(props, p.name, p.image_background)}
+            onClick={() => addOrRemove(props, p.name, p.image_background)}
           >
             {p.name}
           </li>
@@ -75,80 +127,89 @@ const GameSelectModal = ({ show, chosenGame, onHide }) => {
     <Modal
       show={show}
       onHide={onHide}
-      size='xl'
-      aria-labelledby='contained-modal-title-vcenter'
+      size="xl"
+      aria-labelledby="contained-modal-title-vcenter"
       centered
     >
-      <Modal.Header closeButton className='modal-header'>
-        <Modal.Title id='contained-modal-title-vcenter' className='modal-title'>
+      <Modal.Header closeButton className="modal-header">
+        <Modal.Title id="contained-modal-title-vcenter" className="modal-title">
           {show && chosenGame.name}
         </Modal.Title>
       </Modal.Header>
 
-      <Modal.Body className='modal-body'>
+      <Modal.Body className="modal-body">
         {show && (
-          <div className='content'>
-            <div className='row'>
-              <div className='col-3'>
+          <div className="content">
+            <div className="row">
+              <div className="col-3">
                 <img
                   src={chosenGame.background_image}
-                  alt=''
-                  className='modal-img'
+                  alt=""
+                  className="modal-img"
                 />
-                <p
-                  className='add_p'
-                  onClick={
-                    userData.isLogged && (() => handleAdding('games', 'none'))
-                  }
-                >
-                  Add to game list
-                </p>
+                {userData.isLogged && (
+                  <>
+                    <p
+                      className="add_p"
+                      onClick={() =>
+                        addOrRemove(
+                          "games",
+                          chosenGame.name,
+                          chosenGame.background_image
+                        )
+                      }
+                    >
+                      {contains(myGameLists.myGames, chosenGame.name)
+                        ? "Remove game from list"
+                        : "Add to game list"}
+                    </p>
 
-                <p
-                  className='add_p'
-                  onClick={userData.isLogged && (() => changeState('dev'))}
-                >
-                  Add to developer list
-                </p>
-                <div style={{ display: devStatusText }}>
-                  {ListOfpropsToSend('developers')}
-                </div>
-                <p
-                  className='add_p'
-                  onClick={userData.isLogged && (() => changeState('pub'))}
-                >
-                  Add to publisher list
-                </p>
-                <div style={{ display: publisherStatusText }}>
-                  {ListOfpropsToSend('publishers')}
-                </div>
-                <p
-                  className='add_p'
-                  onClick={
-                    userData.isLogged &&
-                    (() => handleAdding('favourites', 'none'))
-                  }
-                >
-                  Add to favourites
-                </p>
-                <p className='score'>Score</p>
-                <p className='p_rating'>
+                    <p className="add_p" onClick={() => changeState("dev")}>
+                      Add to developer list
+                    </p>
+                    <div style={{ display: devStatusText }}>
+                      {ListOfpropsToSend("developers")}
+                    </div>
+                    <p className="add_p" onClick={() => changeState("pub")}>
+                      Add to publisher list
+                    </p>
+                    <div style={{ display: publisherStatusText }}>
+                      {ListOfpropsToSend("publishers")}
+                    </div>
+                    <p
+                      className="add_p"
+                      onClick={() =>
+                        addOrRemove(
+                          "favourites",
+                          chosenGame.name,
+                          chosenGame.background_image
+                        )
+                      }
+                    >
+                      {contains(myGameLists.favourites, chosenGame.name)
+                        ? "Remove game from favourites"
+                        : "Add to game favourites"}
+                    </p>
+                  </>
+                )}
+                <p className="score">Score</p>
+                <p className="p_rating">
                   <img
-                    src='https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/icons-mint-individual-81_2.jpg?w=1000&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=7a6bc3c6c3975085365c7f1fca7757b7'
-                    alt='star'
-                  />{' '}
+                    src="https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/icons-mint-individual-81_2.jpg?w=1000&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=7a6bc3c6c3975085365c7f1fca7757b7"
+                    alt="star"
+                  />{" "}
                   {chosenGame.rating}
                 </p>
               </div>
-              <div className='col-9'>
+              <div className="col-9">
                 <h4>Description</h4>
                 <p>{chosenGame.description_raw}</p>
                 <h4>Genres</h4>
-                {ListOfprops('genres')}
+                {ListOfprops("genres")}
                 <h4>Developers</h4>
-                {ListOfprops('developers')}
+                {ListOfprops("developers")}
                 <h4>Publishers</h4>
-                {ListOfprops('publishers')}
+                {ListOfprops("publishers")}
                 <h4>Released data</h4>
                 <p>{chosenGame.released}</p>
                 <h4>Available platforms</h4>
@@ -168,8 +229,8 @@ const GameSelectModal = ({ show, chosenGame, onHide }) => {
         )}
       </Modal.Body>
 
-      <Modal.Footer className='modal-footer'>
-        <Button onClick={onHide} className='close-button'>
+      <Modal.Footer className="modal-footer">
+        <Button onClick={onHide} className="close-button">
           Close
         </Button>
       </Modal.Footer>
