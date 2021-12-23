@@ -17,15 +17,20 @@ const LIST_TYPE = {
 const BASE_URL = "http://localhost:8080";
 
 const MyGamesPage = () => {
+  const { userData } = useContext(StoreContext);
+  const { myGames, developers, publishers, favourites, handleDelete } =
+    useMyGamesInfo(userData.nick, userData.isLogged);
+
+  console.log(myGames);
+  console.log(developers);
+
+  useEffect(() => {
+    console.log("game title changed");
+  }, [myGames, developers, publishers, favourites]);
   const [current, setCurrent] = useState("Games");
   const [chosenRecord, setChosenRecord] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currRate, setCurrRate] = useState(0);
-
-  const { userData } = useContext(StoreContext);
-
-  const { myGames, developers, publishers, favourites, handleDelete } =
-    useMyGamesInfo(userData.nick);
 
   const handleModalHide = () => {
     setChosenRecord(null);
@@ -37,6 +42,32 @@ const MyGamesPage = () => {
     setShowModal(true);
     setCurrRate(rate);
     setChosenRecord(name);
+  };
+
+  const findAndReplaceScore = (arr, title, score) => {
+    let name;
+
+    arr.forEach((element) => {
+      name = element.title || element.name;
+      if (name === title) {
+        element.rate = score;
+      }
+    });
+  };
+
+  const changeScore = (title, score) => {
+    switch (current) {
+      case LIST_TYPE.Games:
+        findAndReplaceScore(myGames, title, score);
+      case LIST_TYPE.Devs:
+        findAndReplaceScore(developers, title, score);
+      case LIST_TYPE.Publishers:
+        findAndReplaceScore(publishers, title, score);
+      case LIST_TYPE.Favourites:
+        findAndReplaceScore(favourites, title, score);
+      default:
+        return false;
+    }
   };
 
   const listResult = (result) => {
@@ -92,6 +123,7 @@ const MyGamesPage = () => {
         onHide={handleModalHide}
         current={current}
         rate={currRate}
+        changeScore={changeScore}
       ></GameChangeRateModal>
       <div className="my-games-content">
         <div className="content-header">

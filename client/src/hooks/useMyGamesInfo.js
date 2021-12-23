@@ -10,19 +10,21 @@ const LIST_TYPE = {
   Favourites: "Favourites",
 };
 
-const useMyGamesInfo = (nick) => {
+const useMyGamesInfo = (nick, isLogged) => {
   const [myGames, setMyGamesDetails] = useState([]);
   const [developers, setDevelopers] = useState([]);
   const [publishers, setPublishers] = useState([]);
   const [favourites, setFavourites] = useState([]);
 
   useEffect(() => {
-    Axios.get(`${BASE_URL}/my-games/${nick}`).then((res) => {
-      setMyGamesDetails(res.data.games);
-      setDevelopers(res.data.developers);
-      setPublishers(res.data.publishers);
-      setFavourites(res.data.favourites);
-    });
+    if (isLogged) {
+      Axios.get(`${BASE_URL}/my-games/${nick}`).then((res) => {
+        setMyGamesDetails(res.data.games);
+        setDevelopers(res.data.developers);
+        setPublishers(res.data.publishers);
+        setFavourites(res.data.favourites);
+      });
+    }
   }, []);
 
   const filterOut = (array, name) => {

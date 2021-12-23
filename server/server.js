@@ -151,6 +151,37 @@ app.post("/login", (req, response) => {
   });
 });
 
+app.post("/change_score", (req, res) => {
+  const { tableName, newRate, name, nick } = req.body;
+
+  let titleOrName =
+    tableName === "games" || tableName === "favourites" ? "title" : "name";
+
+  const changeRateQuery = queryBuilder.createUpdateQuery(
+    tableName,
+    ["rate"],
+    ["=", "="],
+    ["users_id", titleOrName],
+    ["AND"]
+  );
+  const queryId = queryBuilder.createSelectQuery(
+    ["id"],
+    "users",
+    ["nick"],
+    ["="]
+  );
+  db.query(queryId, [nick], (errId, resultId) => {
+    db.query(
+      changeRateQuery,
+      [newRate, resultId[0].id, name],
+      (errChange, resChange) => {
+        console.log(errChange);
+        console.log(resChange);
+        res.send({ newRate, name });
+      }
+    );
+  });
+});
 // endpoint responsible for adding game to user
 app.post("/add_game", (req, res) => {
   console.log(req.body);

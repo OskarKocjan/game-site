@@ -45,7 +45,7 @@ const MainPage = () => {
     favourites,
     handleDelete,
     containsObject,
-  } = useMyGamesInfo(userData.nick);
+  } = useMyGamesInfo(userData.nick, userData.isLogged);
 
   const { games, gamesDetails, isLoading, isError, hasMore } = useGamesSearch(
     gameTitle,
