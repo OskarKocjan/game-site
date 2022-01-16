@@ -1,7 +1,7 @@
-@import 'global';
+@import "global";
 
 .content {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 .modal-header {
@@ -90,6 +90,24 @@
 img {
   width: 50%;
   margin-bottom: 10px;
+}
+
+.change-rating {
+  display: center;
+  font-size: 2rem;
+  img {
+    width: 25%;
+    margin-left: 3.5rem;
+  }
+  p {
+    display: inline;
+  }
+  span {
+    margin-right: 1rem;
+  }
+  select {
+    font-size: 1rem;
+  }
 }
 
 .p_rating {

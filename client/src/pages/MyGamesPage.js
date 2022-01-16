@@ -1,87 +1,99 @@
-import React, { useEffect, useContext, useState } from 'react';
-import gameImg from '../assets/game-pad.png';
-import '../styles/myGames.scss';
-import Axios from 'axios';
-import { StoreContext } from '../store/StoreProvider';
+import React, { useEffect, useContext, useState } from "react";
+import gameImg from "../assets/game-pad.png";
+import "../styles/myGames.scss";
+import "../styles/modal.scss";
+import Axios from "axios";
+import { StoreContext } from "../store/StoreProvider";
+import useMyGamesInfo from "../hooks/useMyGamesInfo";
+import GameChangeRateModal from "../components/GameChangeRateModal";
 
 const LIST_TYPE = {
-  Games: 'Games',
-  Devs: 'Developers',
-  Publishers: 'Publishers',
-  Favourites: 'Favourites',
+  Games: "Games",
+  Devs: "Developers",
+  Publishers: "Publishers",
+  Favourites: "Favourites",
 };
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = "http://localhost:8080";
 
 const MyGamesPage = () => {
-  const [games, setGamesDetails] = useState([]);
-  const [developers, setDevelopers] = useState([]);
-  const [publishers, setPublishers] = useState([]);
-  const [current, setCurrent] = useState('Games');
-  const [favourites, setFavourites] = useState([]);
-
   const { userData } = useContext(StoreContext);
+  const { myGames, developers, publishers, favourites, handleDelete } =
+    useMyGamesInfo(userData.nick, userData.isLogged);
+
+  console.log(myGames);
+  console.log(developers);
 
   useEffect(() => {
-    Axios.get(`${BASE_URL}/my-games/${userData.nick}`).then((res) => {
-      setGamesDetails(res.data.games);
-      setDevelopers(res.data.developers);
-      setPublishers(res.data.publishers);
-      setFavourites(res.data.favourites);
-    });
-  }, []);
+    console.log("game title changed");
+  }, [myGames, developers, publishers, favourites]);
+  const [current, setCurrent] = useState("Games");
+  const [chosenRecord, setChosenRecord] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [currRate, setCurrRate] = useState(0);
 
-  const handleDelete = (item) => {
-    console.log(item, current, userData.nick);
-    Axios.post(`${BASE_URL}/delete`, {
-      table: current.toLocaleLowerCase(),
-      nick: userData.nick,
-      name: item.title || item.name,
-    }).then((res) => {
-      console.log(res);
-      const name = res.data.name;
-      switch (current) {
-        case LIST_TYPE.Games:
-          setGamesDetails(filterOut(games, name));
-          break;
-        case LIST_TYPE.Devs:
-          setDevelopers(filterOut(developers, name));
-          break;
-        case LIST_TYPE.Publishers:
-          setPublishers(filterOut(publishers, name));
-          break;
-        case LIST_TYPE.Favourites:
-          setFavourites(filterOut(favourites, name));
-          break;
-        default:
-          console.log('nothing');
+  const handleModalHide = () => {
+    setChosenRecord(null);
+    setCurrRate(0);
+    setShowModal(false);
+  };
+
+  const prepareModal = (name, rate) => {
+    setShowModal(true);
+    setCurrRate(rate);
+    setChosenRecord(name);
+  };
+
+  const findAndReplaceScore = (arr, title, score) => {
+    let name;
+
+    arr.forEach((element) => {
+      name = element.title || element.name;
+      if (name === title) {
+        element.rate = score;
       }
     });
   };
 
-  const filterOut = (array, name) => {
-    return array.filter((item) => (item.title || item.name) !== name);
+  const changeScore = (title, score) => {
+    switch (current) {
+      case LIST_TYPE.Games:
+        findAndReplaceScore(myGames, title, score);
+      case LIST_TYPE.Devs:
+        findAndReplaceScore(developers, title, score);
+      case LIST_TYPE.Publishers:
+        findAndReplaceScore(publishers, title, score);
+      case LIST_TYPE.Favourites:
+        findAndReplaceScore(favourites, title, score);
+      default:
+        return false;
+    }
   };
 
   const listResult = (result) => {
     return result.map((item, idx) => {
       return (
-        <div className='results-top-bar'>
-          <p className='results-game-num'>{idx}</p>
-          <p className='results-game-miniature'>
+        <div className="results-top-bar">
+          <p className="results-game-num">{idx}</p>
+          <p className="results-game-miniature">
             <button
-              className='btn'
+              className="btn"
               onClick={() => {
-                handleDelete(item);
+                handleDelete(item, current);
               }}
             >
               x
             </button>
-            <img src={item.image} alt='Game Miniature' />
+            <img src={item.image} alt="Game Miniature" />
           </p>
-          <p className='results-title'>{item.title || item.name}</p>
-          <p className='results-game-status'>{item.status || item.slug}</p>
-          <p className='results-game-rate'>{item.rate}</p>
+          <p className="results-title">{item.title || item.name}</p>
+          <p className="results-game-status">{item.status || item.slug}</p>
+          <p
+            className="results-game-rate"
+            onClick={() => prepareModal(item.title || item.name, item.rate)}
+          >
+            {item.rate}
+          </p>
         </div>
       );
     });
@@ -90,7 +102,7 @@ const MyGamesPage = () => {
   const render = () => {
     switch (current) {
       case LIST_TYPE.Games:
-        return listResult(games);
+        return listResult(myGames);
       case LIST_TYPE.Devs:
         return listResult(developers);
       case LIST_TYPE.Publishers:
@@ -101,16 +113,25 @@ const MyGamesPage = () => {
         return [];
     }
   };
+  console.log(showModal);
 
   return (
-    <div className='my-games-page-container'>
-      <div className='my-games-content'>
-        <div className='content-header'>
-          <div className='content-text'>
+    <div className="my-games-page-container">
+      <GameChangeRateModal
+        show={showModal}
+        chosenRecord={chosenRecord}
+        onHide={handleModalHide}
+        current={current}
+        rate={currRate}
+        changeScore={changeScore}
+      ></GameChangeRateModal>
+      <div className="my-games-content">
+        <div className="content-header">
+          <div className="content-text">
             <p>Favourites</p>
           </div>
 
-          <nav className='my-games-menu-list'>
+          <nav className="my-games-menu-list">
             <ul>
               <li onClick={(e) => setCurrent(e.target.innerText)}>
                 {LIST_TYPE.Games}
@@ -128,25 +149,25 @@ const MyGamesPage = () => {
           </nav>
         </div>
 
-        <div className='chosen-section'>
+        <div className="chosen-section">
           <p>Games</p>
         </div>
 
-        <div className='my-games-result'>
-          <div className='results-top-bar'>
-            <p className='results-game-num'>#</p>
-            <p className='results-game-miniature'>Minature</p>
-            <p className='results-title'>
+        <div className="my-games-result">
+          <div className="results-top-bar">
+            <p className="results-game-num">#</p>
+            <p className="results-game-miniature">Minature</p>
+            <p className="results-title">
               {current === LIST_TYPE.Games || current === LIST_TYPE.Favourites
-                ? 'Title'
-                : 'Name'}
+                ? "Title"
+                : "Name"}
             </p>
-            <p className='results-game-status'>
+            <p className="results-game-status">
               {current === LIST_TYPE.Games || current === LIST_TYPE.Favourites
-                ? 'Status'
-                : 'Slug'}
+                ? "Status"
+                : "Slug"}
             </p>
-            <p className='results-game-rate'>Rate</p>
+            <p className="results-game-rate">Rate</p>
           </div>
           {render()}
         </div>
