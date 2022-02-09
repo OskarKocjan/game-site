@@ -1,43 +1,50 @@
-import React from "react";
-import { Col, Row, Container, Image } from "react-bootstrap";
-import defaultIcon from "../assets/game-pad.png";
-
-
+import React from 'react';
+import { Col, Row, Container, Image } from 'react-bootstrap';
+import defaultIcon from '../assets/game-pad.png';
 
 const ResultsList = (props) => {
-
   const listOfGames = getGamesGrid(props);
-  
+
   return (
-    <div className="games-results-list">
-      {listOfGames.length === 0 && !props.isLoading ? <div className="no-results-found">No games found</div> : <Container fluid>{listOfGames}</Container>}
+    <div className='games-results-list'>
+      {listOfGames.length === 0 && !props.isLoading ? (
+        <div className='no-results-found'>No games found</div>
+      ) : (
+        <Container fluid>{listOfGames}</Container>
+      )}
     </div>
   );
 };
 
 export default ResultsList;
 
-
-
-const getGamesGrid = ({ games, lastGameElementRef, handleGameClick, setChosenGame}) => {
+const getGamesGrid = ({
+  games,
+  lastGameElementRef,
+  handleGameClick,
+  setChosenGame,
+}) => {
   const gamesRows = games.map((game, idx) => {
-
-    const miniature = game.background_image || defaultIcon;
+    const miniature = game.img || game.background_image || defaultIcon;
 
     if (games.length === idx + 1) {
       return (
-        <Col xl={3} lg={6} md={6} sm={6}
-          className="games-col"
+        <Col
+          xl={3}
+          lg={6}
+          md={6}
+          sm={6}
+          className='games-col'
           key={game + idx}
           ref={lastGameElementRef}
-          onClick={()=> {
+          onClick={() => {
             setChosenGame(game);
             handleGameClick();
           }}
         >
-          <div className="inner-col-wrapper">
-            <Image src={miniature} className="game-miniature" />
-            <div className="game-title">
+          <div className='inner-col-wrapper'>
+            <Image src={miniature} className='game-miniature' />
+            <div className='game-title'>
               <h5>{game.name}</h5>
             </div>
           </div>
@@ -46,21 +53,24 @@ const getGamesGrid = ({ games, lastGameElementRef, handleGameClick, setChosenGam
     }
 
     return (
-      <Col xl={3} lg={6} md={6} sm={6}
-        className="games-col"
+      <Col
+        xl={3}
+        lg={6}
+        md={6}
+        sm={6}
+        className='games-col'
         key={game + idx}
-        onClick={()=> {
+        onClick={() => {
           setChosenGame(game);
           handleGameClick();
         }}
       >
-         <div className="inner-col-wrapper">
-         <Image src={miniature} className="game-miniature" />
-           <div className="game-title">
-              <h5>{game.name}</h5>
-           </div>
-         </div>
-        
+        <div className='inner-col-wrapper'>
+          <Image src={miniature} className='game-miniature' />
+          <div className='game-title'>
+            <h5>{game.name}</h5>
+          </div>
+        </div>
       </Col>
     );
   });

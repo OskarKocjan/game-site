@@ -73,6 +73,7 @@ const Menu = () => {
             />
           </>
         )}
+        <MenuButton innerText='E-sport' route={`/e-sport`} />
         <LoginButton isUserLogged={userData.isLogged} />
       </div>
     </nav>

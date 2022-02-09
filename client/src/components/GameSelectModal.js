@@ -31,6 +31,7 @@ const GameSelectModal = ({
     setDevStatusText('none');
     setPublisherStatusText('none');
     chosenGame && getComments();
+    console.log(chosenGame);
   }, [chosenGame]);
 
   const { userData } = useContext(StoreContext);
