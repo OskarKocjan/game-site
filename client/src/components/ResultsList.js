@@ -25,7 +25,8 @@ const getGamesGrid = ({
   setChosenGame,
 }) => {
   const gamesRows = games.map((game, idx) => {
-    const miniature = game.img || game.background_image || defaultIcon;
+    const miniature =
+      game.image_url || game.img || game.background_image || defaultIcon;
 
     if (games.length === idx + 1) {
       return (

@@ -2,19 +2,19 @@ const games = [
   {
     id: 23,
     name: 'Call of Duty',
-    slug: 'cod-mw',
+    slug: 'codmw',
     img: 'https://media.rawg.io/media/games/9fb/9fbaea2168caea1f806546dfdaaeb1da.jpg',
   },
   {
     id: 3,
     name: 'CS:GO',
-    slug: 'cs-go',
+    slug: 'csgo',
     img: 'https://media.rawg.io/media/games/736/73619bd336c894d6941d926bfd563946.jpg',
   },
   {
     id: 4,
     name: 'Dota 2',
-    slug: 'dota-2',
+    slug: 'dota2',
     img: 'https://media.rawg.io/media/games/83f/83f6f70a7c1b86cd2637b029d8b42caa.jpg',
   },
   {
@@ -32,7 +32,7 @@ const games = [
   {
     id: 1,
     name: 'LoL',
-    slug: 'league-of-legends',
+    slug: 'lol',
     img: 'https://media.rawg.io/media/games/78b/78bc81e247fc7e77af700cbd632a9297.jpg',
   },
   {
@@ -56,7 +56,7 @@ const games = [
   {
     id: 24,
     name: 'Rainbow 6 Siege',
-    slug: 'r6-siege',
+    slug: 'r6siege',
     img: 'https://media.rawg.io/media/games/b34/b3419c2706f8f8dbe40d08e23642ad06.jpg',
   },
   {
