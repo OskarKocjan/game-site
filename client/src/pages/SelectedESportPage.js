@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Axios from 'axios';
 import ResultsList from '../components/ResultsList';
+import TournamentBracketModal from '../components/TournamentBracketsModal';
 
 const BASE_API_URL_ESPORT = 'https://api.pandascore.co';
 
@@ -10,6 +11,8 @@ const SelectedEsportPage = () => {
   const [option, setOption] = useState(null);
   const [chosenGame, setChosenGame] = useState(null);
   const [optionData, setOptionData] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [chosenRecord, setChosenRecord] = useState(null);
 
   useEffect(() => {
     let arrUrl = url.split('/');
@@ -20,6 +23,11 @@ const SelectedEsportPage = () => {
       return arrUrl.at(-2);
     });
   }, []);
+
+  const handleModalHide = () => {
+    setChosenRecord(null);
+    setShowModal(false);
+  };
 
   useEffect(() => {
     console.log(chosenGame);
@@ -32,11 +40,27 @@ const SelectedEsportPage = () => {
       });
     }
   }, [chosenGame]);
+
+  console.log(chosenRecord);
+
   if (optionData) {
     return (
       <div className='main-content'>
         {' '}
-        <ResultsList games={optionData} isLoading={true} />
+        <ResultsList
+          games={optionData}
+          isLoading={true}
+          handleGameClick={() => setShowModal(true)}
+          setChosenGame={setChosenRecord}
+        />
+        {chosenRecord && (
+          <TournamentBracketModal
+            show={showModal}
+            onHide={handleModalHide}
+            name={chosenRecord.name}
+            tournamentId={chosenRecord.id}
+          />
+        )}
       </div>
     );
   } else {
