@@ -75,34 +75,6 @@ const TournamentBracketModal = ({ show, name, onHide, tournamentId }) => {
   console.log(data);
   console.log('----------------------');
 
-  const rounds = [
-    {
-      title: 'Round one',
-      seeds: [
-        {
-          id: 1,
-          date: new Date().toDateString(),
-          teams: [{ name: 'Team A' }, { name: 'Team B' }],
-        },
-        {
-          id: 2,
-          date: new Date().toDateString(),
-          teams: [{ name: 'Team C' }, { name: 'Team D' }],
-        },
-      ],
-    },
-    {
-      title: 'Round two',
-      seeds: [
-        {
-          id: 3,
-          date: new Date().toDateString(),
-          teams: [{ name: 'Team A' }, { name: 'Team C' }],
-        },
-      ],
-    },
-  ];
-
   const fromTreeToBrackets = (i, treeNode) => {
     if (treeNode) {
       const { titleName, team1, team2 } = stringToArrBracket(treeNode.name);
@@ -155,7 +127,7 @@ const TournamentBracketModal = ({ show, name, onHide, tournamentId }) => {
     <Modal
       show={show}
       onHide={onHide}
-      size='l'
+      size='xl'
       aria-labelledby='contained-modal-title-vcenter'
       centered
     >
@@ -164,7 +136,7 @@ const TournamentBracketModal = ({ show, name, onHide, tournamentId }) => {
           {show && 'name'}
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body className='modal-body'>
+      <Modal.Body className='modal-body-esport'>
         <Component></Component>
       </Modal.Body>
       <Modal.Footer className='modal-footer'>

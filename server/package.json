@@ -19,6 +19,7 @@
     "knex": "^0.21.19",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.7",
-    "objection": "^2.2.18"
+    "objection": "^2.2.18",
+    "supertest": "^6.2.2"
   }
 }
