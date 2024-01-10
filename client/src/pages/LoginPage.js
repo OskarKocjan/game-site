@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useContext } from 'react';
-import Axios from 'axios';
-import '../styles/loginPage.scss';
-import { Formik, Form, useField } from 'formik';
-import { useHistory } from 'react-router-dom';
-import * as Yup from 'yup';
-import { StoreContext } from '../store/StoreProvider';
+import React, { useState, useEffect, useContext } from "react";
+import Axios from "axios";
+import "../styles/loginPage.scss";
+import { Formik, Form, useField } from "formik";
+import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import { StoreContext } from "../store/StoreProvider";
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = "http://localhost:8080";
 
 const LoginPage = () => {
-  let history = useHistory();
+  let navigate = useNavigate();
 
-  const [loginStatus, setLoginStatus] = useState('');
+  const [loginStatus, setLoginStatus] = useState("");
   const [logResponseDissapear, setLogResponseDissapear] = useState(false);
 
-  const [registerStatus, setRegisterStatus] = useState('');
+  const [registerStatus, setRegisterStatus] = useState("");
   const [regResponseDissapear, setRegResponseDissapear] = useState(false);
 
   const [rememberMe, setRememberMe] = useState(false);
@@ -52,16 +52,16 @@ const LoginPage = () => {
 
         if (res.data.isLogged && res.data.auth) {
           if (rememberMe) {
-            localStorage.setItem('rememberMe', values.emailLog);
+            localStorage.setItem("rememberMe", values.emailLog);
           } else {
             if (Boolean(localStorage.rememberMe)) {
-              localStorage.removeItem('rememberMe');
+              localStorage.removeItem("rememberMe");
             }
           }
 
-          localStorage.setItem('token', res.data.token);
+          localStorage.setItem("token", res.data.token);
           setUserJWT(res.data.token);
-          history.push('/');
+          navigate("/");
         } else {
           setLoginStatus(res.data.message);
         }
@@ -86,29 +86,29 @@ const LoginPage = () => {
     <div className='login-page'>
       <Formik
         initialValues={{
-          nick: '',
-          emailReg: '',
-          passwordReg: '',
-          confirmPasswordReg: '',
+          nick: "",
+          emailReg: "",
+          passwordReg: "",
+          confirmPasswordReg: "",
           file: null,
         }}
         validationSchema={Yup.object({
           nick: Yup.string()
-            .min(2, 'Must be at least 2 characters')
-            .max(30, 'Must be at 30 characters or less')
-            .required('Required'),
+            .min(2, "Must be at least 2 characters")
+            .max(30, "Must be at 30 characters or less")
+            .required("Required"),
           emailReg: Yup.string()
-            .email('Invalid email address')
-            .required('Required'),
+            .email("Invalid email address")
+            .required("Required"),
           passwordReg: Yup.string()
             .matches(
               /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-              '8 Characters, One Uppercase, One Lowercase, One Number and One Special Character'
+              "8 Characters, One Uppercase, One Lowercase, One Number and One Special Character"
             )
-            .required('Required'),
+            .required("Required"),
           confirmPasswordReg: Yup.string()
-            .oneOf([Yup.ref('passwordReg'), null], 'Password must match')
-            .required('Required'),
+            .oneOf([Yup.ref("passwordReg"), null], "Password must match")
+            .required("Required"),
         })}
         onSubmit={(values, { setSubmitting, resetForm }) => {
           setTimeout(() => {
@@ -146,12 +146,12 @@ const LoginPage = () => {
               placeholder='Email'
             />
             <button type='submit'>
-              {props.isSubmitting ? 'Loading...' : 'Submit'}
+              {props.isSubmitting ? "Loading..." : "Submit"}
             </button>
 
             <h4
               className={`register-response-text ${
-                regResponseDissapear && 'dissapear'
+                regResponseDissapear && "dissapear"
               }`}
             >
               {registerStatus}
@@ -164,14 +164,14 @@ const LoginPage = () => {
         initialValues={{
           emailLog: Boolean(localStorage.rememberMe)
             ? localStorage.rememberMe
-            : '',
-          passwordLog: '',
+            : "",
+          passwordLog: "",
         }}
         validationSchema={Yup.object({
           emailLog: Yup.string()
-            .email('Invalid email address')
-            .required('Required'),
-          passwordLog: Yup.string().required('Required'),
+            .email("Invalid email address")
+            .required("Required"),
+          passwordLog: Yup.string().required("Required"),
         })}
         onSubmit={(values, { setSubmitting, resetForm }) => {
           setTimeout(() => {
@@ -209,12 +209,12 @@ const LoginPage = () => {
             </label>
 
             <button type='submit'>
-              {props.isSubmitting ? 'Loading...' : 'Log in'}
+              {props.isSubmitting ? "Loading..." : "Log in"}
             </button>
 
             <h4
               className={`login-response-text ${
-                logResponseDissapear && 'dissapear'
+                logResponseDissapear && "dissapear"
               }`}
             >
               {loginStatus}

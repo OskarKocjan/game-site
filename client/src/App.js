@@ -1,53 +1,51 @@
-import React, { useContext, useEffect } from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from 'react-router-dom';
-import MainPage from './pages/MainPage';
-import LoginPage from './pages/LoginPage';
-import ErrorPage from './pages/ErrorPage';
-import Menu from './components/Menu';
-import ESportPage from './pages/ESportPage';
-import MyGamesPage from './pages/MyGamesPage';
-import ProfilePage from './pages/ProfilePage';
-import SelectedESportPage from './pages/SelectedESportPage';
-import { StoreContext } from './store/StoreProvider';
-import { getAllNamesFromEsportString } from './helpingFunctions/dataFuntions';
+import React, { useContext } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MainPage from "./pages/MainPage";
+import LoginPage from "./pages/LoginPage";
+import ErrorPage from "./pages/ErrorPage";
+import Menu from "./components/Menu";
+import ESportPage from "./pages/ESportPage";
+import MyGamesPage from "./pages/MyGamesPage";
+import ProfilePage from "./pages/ProfilePage";
+import SelectedESportPage from "./pages/SelectedESportPage";
+import { StoreContext } from "./store/StoreProvider";
+import { getAllNamesFromEsportString } from "./helpingFunctions/dataFuntions";
 
-function App() {
+const App = () => {
   const { userData } = useContext(StoreContext);
 
   return (
     <Router>
       <div className='App'>
         <Menu />
-        <Switch>
-          <Route path='/' exact component={MainPage} />
-          <Route path={`/my-games/${userData.nick}`} component={MyGamesPage} />
+        <Routes>
+          <Route path='/' exact='true' element={<MainPage />} />
+          <Route
+            path={`/my-games/${userData.nick}`}
+            element={<MyGamesPage />}
+          />
           <Route
             path={`/edit/profile/${userData.nick}`}
-            component={ProfilePage}
+            element={<ProfilePage />}
           />
           <Route
             path={`/e-sport/${getAllNamesFromEsportString(
-              'slug'
+              "slug"
             )}/(players|teams|leagues|info)`}
-            component={SelectedESportPage}
+            element={<SelectedESportPage />}
           />
-          <Route path={`/e-sport`} component={ESportPage} />
-          <Route path='/' exact component={MainPage} />
+          <Route path={`/e-sport`} element={<ESportPage />} />
+          <Route path='/' exact='true' element={<MainPage />} />
           {userData && userData.isLogged && userData.auth ? (
-            <Redirect to='/' />
+            <Route path='/' exact='true' element={<MainPage />} />
           ) : (
-            <Route path='/login' component={LoginPage} />
+            <Route path='/login' element={<LoginPage />} />
           )}
-          <Route component={ErrorPage} />
-        </Switch>
+          <Route element={<ErrorPage />} />
+        </Routes>
       </div>
     </Router>
   );
-}
+};
 
 export default App;

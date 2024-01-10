@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
-import '../styles/navMenu.scss';
-import kite from '../assets/kite.png';
-import { NavLink } from 'react-router-dom';
-import { StoreContext } from '../store/StoreProvider';
+import React, { useContext } from "react";
+import "../styles/navMenu.scss";
+import kite from "../assets/kite.png";
+import { NavLink } from "react-router-dom";
+import { StoreContext } from "../store/StoreProvider";
 
 const Logo = () => {
   return (
     <div className='site-logo'>
-      <NavLink className='logo-link' to='/' exact>
-        <span className='logo-text' style={{ textDecoration: 'none' }}>
+      <NavLink className='logo-link' to='/' exact='true'>
+        <span className='logo-text' style={{ textDecoration: "none" }}>
           GamesKite
         </span>
         <img src={kite} className='logo-img' alt='kite-logo-image' />
@@ -18,12 +18,12 @@ const Logo = () => {
 };
 
 const LoginButton = ({ isUserLogged }) => {
-  const setLoginButtonValue = isUserLogged ? 'Log out' : 'Login';
+  const setLoginButtonValue = isUserLogged ? "Log out" : "Login";
   const { setUserData, setUserJWT } = useContext(StoreContext);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    setUserData({ auth: false, nick: '', isLogged: false });
+    localStorage.removeItem("token");
+    setUserData({ auth: false, nick: "", isLogged: false });
     setUserJWT(null);
   };
 
@@ -73,7 +73,7 @@ const Menu = () => {
             />
           </>
         )}
-        <MenuButton innerText='E-sport' route={`/e-sport`} />
+        {/* <MenuButton innerText='E-sport' route={`/e-sport`} /> */}
         <LoginButton isUserLogged={userData.isLogged} />
       </div>
     </nav>

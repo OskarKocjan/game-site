@@ -1,12 +1,12 @@
-import { IconButton } from '@material-ui/core/';
-import React, { useState, useRef, useCallback, useContext } from 'react';
-import '../styles/mainPage.scss';
-import '../styles/modal.scss';
-import ResultsList from '../components/ResultsList';
-import useGamesSearch from '../hooks/useGamesSearch';
-import GameSelectModal from '../components/GameSelectModal';
-import { StoreContext } from '../store/StoreProvider';
-import useMyGamesInfo from '../hooks/useMyGamesInfo';
+import { IconButton } from "@mui/material";
+import React, { useState, useRef, useCallback, useContext } from "react";
+import "../styles/mainPage.scss";
+import "../styles/modal.scss";
+import ResultsList from "../components/ResultsList";
+import useGamesSearch from "../hooks/useGamesSearch";
+import GameSelectModal from "../components/GameSelectModal";
+import { StoreContext } from "../store/StoreProvider";
+import useMyGamesInfo from "../hooks/useMyGamesInfo";
 
 const SearchInput = ({ gameTitle, handleGameSearch, resetInput }) => {
   return (
@@ -21,10 +21,10 @@ const SearchInput = ({ gameTitle, handleGameSearch, resetInput }) => {
       <IconButton
         aria-label='delete'
         color='primary'
-        style={{ color: '#fff' }}
+        style={{ color: "#fff" }}
         onClick={resetInput}
       >
-        {' '}
+        {" "}
         X
       </IconButton>
     </div>
@@ -32,7 +32,7 @@ const SearchInput = ({ gameTitle, handleGameSearch, resetInput }) => {
 };
 
 const MainPage = () => {
-  const [gameTitle, setGameTitle] = useState('');
+  const [gameTitle, setGameTitle] = useState("");
 
   const [pageNubmer, setPageNumber] = useState(1);
   const [showModal, setShowModal] = useState(false);
@@ -80,7 +80,7 @@ const MainPage = () => {
   };
 
   const resetInput = () => {
-    setGameTitle('');
+    setGameTitle("");
   };
 
   return (
@@ -108,9 +108,9 @@ const MainPage = () => {
         contains={containsObject}
       />
 
-      <div className='loading-message'>{isLoading && 'Loading...'}</div>
+      <div className='loading-message'>{isLoading && "Loading..."}</div>
       <div className='error-message'>
-        {isError && 'Something went wrong :('}
+        {isError && "Something went wrong :("}
       </div>
     </div>
   );

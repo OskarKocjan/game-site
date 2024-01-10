@@ -1,12 +1,12 @@
-const dotenv = require('dotenv');
-dotenv.config({ path: './.env' });
+const dotenv = require("dotenv");
+dotenv.config({ path: "./.env" });
 
-const express = require('express');
-const mysql = require('mysql');
-const cors = require('cors');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const queryBuilder = require('./queryBuilder');
+const express = require("express");
+const mysql = require("mysql2");
+const cors = require("cors");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const queryBuilder = require("./queryBuilder");
 
 const PORT = 8080 || process.env.PORT;
 
@@ -18,58 +18,59 @@ app.use(cors());
 
 /* local db */
 
-const db = mysql.createConnection({
-  host: process.env.LOCAL_DB_HOST,
-  user: process.env.LOCAL_DB_USER,
-  password: process.env.LOCAL_DB_PASSWORD,
-  database: process.env.LOCAL_DB_NAME,
-  multipleStatements: true,
-});
+// const db = mysql.createConnection({
+//   host: process.env.LOCAL_DB_HOST,
+//   user: process.env.LOCAL_DB_USER,
+//   password: process.env.LOCAL_DB_PASSWORD,
+//   database: process.env.LOCAL_DB_NAME,
+//   multipleStatements: true,
+// });
 
 /* remote db */
-// const db = mysql.createConnection({
-//   host: process.env.REMOTE_DB_HOST,
-//   user: process.env.REMOTE_DB_USER,
-//   password: process.env.REMOTE_DB_PASSWORD,
-//   database: process.env.REMOTE_DB_NAME,
-// });
+const db = mysql.createConnection({
+  host: process.env.REMOTE_DB_HOST,
+  user: process.env.REMOTE_DB_USER,
+  password: process.env.REMOTE_DB_PASSWORD,
+  database: process.env.REMOTE_DB_NAME,
+  multipleStatements: true,
+});
 
 // connect to the database
 db.connect((err) => {
   if (err) {
     console.log(err);
   } else {
-    console.log('Connected !');
+    console.log("Connected !");
   }
 });
 
 // endpoint responsible for user registration
-app.post('/register', (req, res) => {
+app.post("/register", (req, res) => {
   console.log(req.body);
 
   const { email, nick, password } = req.body;
-  const table = 'users';
+  const table = "users";
 
   const queryNick = queryBuilder.createSelectQuery(
-    ['*'],
+    ["*"],
     table,
-    ['nick'],
-    ['=']
+    ["nick"],
+    ["="]
   );
   console.log(queryNick);
 
   const queryEmail = queryBuilder.createSelectQuery(
-    ['*'],
+    ["*"],
     table,
-    ['email'],
-    ['=']
+    ["email"],
+    ["="]
   );
   console.log(queryEmail);
 
   const queryReg = queryBuilder.createInsertQuery(table, [
-    'nick',
-    'email',
-    'password',
+    "nick",
+    "email",
+    "password",
   ]);
   console.log(queryReg);
 
@@ -78,7 +79,7 @@ app.post('/register', (req, res) => {
       res.send({ err: errNick });
     }
     if (resultNick.length > 0) {
-      res.send({ message: 'Username already exists!' });
+      res.send({ message: "Username already exists!" });
     } else {
       db.query(queryEmail, [email], (errEmail, resultEmail) => {
         if (errEmail) {
@@ -86,7 +87,7 @@ app.post('/register', (req, res) => {
         }
 
         if (resultEmail.length > 0) {
-          res.send({ message: 'Email already used!' });
+          res.send({ message: "Email already used!" });
         } else {
           bcrypt.hash(password, 10, (err, hashedPassword) => {
             console.log(password, hashedPassword);
@@ -97,7 +98,7 @@ app.post('/register', (req, res) => {
               (errReg, resultReg) => {
                 console.log(errReg);
                 console.log(resultReg);
-                res.send({ message: 'Succesfull registration!' });
+                res.send({ message: "Succesfull registration!" });
               }
             );
           });
@@ -108,19 +109,19 @@ app.post('/register', (req, res) => {
 });
 
 // endpoint responsible for user login
-app.post('/login', (req, response) => {
+app.post("/login", (req, response) => {
   const { email, password } = req.body;
 
   const query = queryBuilder.createSelectQuery(
-    ['*'],
-    'users',
-    ['email'],
-    ['=']
+    ["*"],
+    "users",
+    ["email"],
+    ["="]
   );
 
   db.query(query, [email, password], (err, result) => {
     if (err) {
-      res.send({ err: err });
+      response.send({ err: err });
       return;
     }
 
@@ -142,31 +143,31 @@ app.post('/login', (req, response) => {
         response.send({
           auth: false,
           isLogged: false,
-          message: 'Wrong username or password',
+          message: "Wrong username or password",
         });
       }
     });
   });
 });
 
-app.post('/change_score', (req, res) => {
+app.post("/change_score", (req, res) => {
   const { tableName, newRate, name, nick } = req.body;
 
   let titleOrName =
-    tableName === 'games' || tableName === 'favourites' ? 'title' : 'name';
+    tableName === "games" || tableName === "favourites" ? "title" : "name";
 
   const changeRateQuery = queryBuilder.createUpdateQuery(
     tableName,
-    ['rate'],
-    ['=', '='],
-    ['users_id', titleOrName],
-    ['AND']
+    ["rate"],
+    ["=", "="],
+    ["users_id", titleOrName],
+    ["AND"]
   );
   const queryId = queryBuilder.createSelectQuery(
-    ['id'],
-    'users',
-    ['nick'],
-    ['=']
+    ["id"],
+    "users",
+    ["nick"],
+    ["="]
   );
   db.query(queryId, [nick], (errId, resultId) => {
     db.query(
@@ -181,44 +182,44 @@ app.post('/change_score', (req, res) => {
   });
 });
 // endpoint responsible for adding game to user
-app.post('/add_game', (req, res) => {
+app.post("/add_game", (req, res) => {
   console.log(req.body);
   const { img, title, status, rate, nick, tableName, slug } = req.body;
 
   let finalStatus;
   let where;
-  const equals = ['=', '='];
+  const equals = ["=", "="];
 
   const queryId = queryBuilder.createSelectQuery(
-    ['id'],
-    'users',
-    ['nick'],
-    ['=']
+    ["id"],
+    "users",
+    ["nick"],
+    ["="]
   );
 
-  if (tableName === 'games' || tableName === 'favourites') {
+  if (tableName === "games" || tableName === "favourites") {
     finalStatus = status;
-    where = ['users_id', 'title'];
-    what = ['image', 'title', 'status', 'rate', 'users_id'];
+    where = ["users_id", "title"];
+    what = ["image", "title", "status", "rate", "users_id"];
   } else {
     finalStatus = slug;
-    where = ['users_id', 'name'];
-    what = ['image', 'name', 'slug', 'rate', 'users_id'];
+    where = ["users_id", "name"];
+    what = ["image", "name", "slug", "rate", "users_id"];
   }
 
   const checkIfExist = queryBuilder.createSelectQuery(
-    ['*'],
+    ["*"],
     tableName,
     where,
     equals,
-    ['AND']
+    ["AND"]
   );
   const insertGameQuery = queryBuilder.createInsertQuery(tableName, what);
 
   db.query(queryId, [nick], (errId, resultId) => {
     db.query(checkIfExist, [resultId[0].id, title], (errCheck, resultCheck) => {
       if (resultCheck.length > 0) {
-        console.log('Game already added');
+        console.log("Game already added");
         res.send();
       } else {
         db.query(
@@ -235,24 +236,24 @@ app.post('/add_game', (req, res) => {
   });
 });
 
-app.post('/delete', (req, res) => {
+app.post("/delete", (req, res) => {
   const { table, nick, name } = req.body;
 
   const titleOrName =
-    table === 'favourites' || table === 'games' ? 'title' : 'name';
+    table === "favourites" || table === "games" ? "title" : "name";
 
   const selectUserId = queryBuilder.createSelectQuery(
-    ['id'],
-    'users',
-    ['nick'],
-    ['=']
+    ["id"],
+    "users",
+    ["nick"],
+    ["="]
   );
 
   const deleteQuery = queryBuilder.createDeleteQuery(
     table,
-    [titleOrName, 'users_id'],
-    ['=', '='],
-    ['AND']
+    [titleOrName, "users_id"],
+    ["=", "="],
+    ["AND"]
   );
 
   db.query(selectUserId, [nick], (errId, resultId) => {
@@ -268,8 +269,8 @@ app.post('/delete', (req, res) => {
 
 // middleware for jwt authentication
 const authenticate = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (token == null) return res.status(401);
 
@@ -282,22 +283,22 @@ const authenticate = (req, res, next) => {
 };
 
 // endpoint responsible for user auth after page refresh
-app.get('/check/auth', authenticate, (req, res) => {
+app.get("/check/auth", authenticate, (req, res) => {
   res.send(req.user);
 });
 
 // endpoint responsible for getting user data
-app.get('/user/:userNick', (req, res) => {
+app.get("/user/:userNick", (req, res) => {
   const nick = req.params.userNick;
   // const query = 'SELECT * FROM users WHERE nick = ?';
-  const query = queryBuilder.createSelectQuery(['*'], 'users', ['nick'], ['=']);
+  const query = queryBuilder.createSelectQuery(["*"], "users", ["nick"], ["="]);
   db.query(query, [nick], (err, result) => {
     res.send(result);
   });
 });
 
 // endpoint responsible for getting user data
-app.put('/user/:userNick', (req, res) => {
+app.put("/user/:userNick", (req, res) => {
   const nick = req.params.userNick;
   const { nickToChange, userDescription, newPassword } = req.body;
 
@@ -308,10 +309,10 @@ app.put('/user/:userNick', (req, res) => {
     // query =
     //   'UPDATE users SET nick = ?, description = ?, password = ? WHERE nick = ?';
     query = queryBuilder.createUpdateQuery(
-      'users',
-      ['nick', 'description', 'password'],
-      ['nick'],
-      ['=']
+      "users",
+      ["nick", "description", "password"],
+      ["nick"],
+      ["="]
     );
 
     bcrypt.hash(newPassword, 10, (err, newHashedPassword) => {
@@ -328,10 +329,10 @@ app.put('/user/:userNick', (req, res) => {
   } else {
     // query = 'UPDATE users SET nick = ?, description = ? WHERE nick = ?';
     query = queryBuilder.createUpdateQuery(
-      'users',
-      ['nick', 'description'],
-      ['nick'],
-      ['=']
+      "users",
+      ["nick", "description"],
+      ["nick"],
+      ["="]
     );
     criteriaArray = [nickToChange, userDescription, nick];
 
@@ -341,10 +342,10 @@ app.put('/user/:userNick', (req, res) => {
         res.status(500);
       }
       if (result.changedRows === 0) {
-        res.status(200).send({ message: 'User up to date' });
+        res.status(200).send({ message: "User up to date" });
       } else {
         res.status(204).send({
-          message: 'User succesfully updated',
+          message: "User succesfully updated",
           nick: nickToChange,
         });
       }
@@ -353,21 +354,21 @@ app.put('/user/:userNick', (req, res) => {
 });
 
 // endpoint responsible for checking if nick to be changed is not already used
-app.get('/change/nick/:userNick', (req, res) => {
+app.get("/change/nick/:userNick", (req, res) => {
   const nick = req.params.userNick;
   // const query = 'SELECT * FROM users WHERE nick = ?';
-  const query = queryBuilder.createSelectQuery(['*'], 'users', ['nick'], ['=']);
+  const query = queryBuilder.createSelectQuery(["*"], "users", ["nick"], ["="]);
   db.query(query, [nick], (err, result) => {
     res.send(!Boolean(result.length));
   });
 });
 
 // endpoint responsible for checking while changing password if given old one is prope
-app.post('/change/password/', (req, response) => {
+app.post("/change/password/", (req, response) => {
   const { nick, oldPassword } = req.body;
 
   // const query = 'SELECT * FROM users WHERE nick = ?';
-  const query = queryBuilder.createSelectQuery(['*'], 'users', ['nick'], ['=']);
+  const query = queryBuilder.createSelectQuery(["*"], "users", ["nick"], ["="]);
 
   db.query(query, [nick], (err, result) => {
     if (err) {
@@ -385,47 +386,47 @@ app.post('/change/password/', (req, response) => {
   });
 });
 
-app.get('/my-games/:userNick', (req, res) => {
+app.get("/my-games/:userNick", (req, res) => {
   const nick = req.params.userNick;
 
-  const gamesAndFav = ['image', 'title', 'status', 'rate'];
-  const devAndPub = ['image', 'name', 'slug', 'rate'];
-  const where = ['users_id'];
+  const gamesAndFav = ["image", "title", "status", "rate"];
+  const devAndPub = ["image", "name", "slug", "rate"];
+  const where = ["users_id"];
   const queryId = queryBuilder.createSelectQuery(
-    ['id'],
-    'users',
-    ['nick'],
-    ['=']
+    ["id"],
+    "users",
+    ["nick"],
+    ["="]
   );
   console.log(queryId);
   console.log(nick);
 
   const gamesQuery = queryBuilder.createSelectQuery(
     gamesAndFav,
-    'games',
+    "games",
     where,
-    ['=']
+    ["="]
   );
 
   const developersQuery = queryBuilder.createSelectQuery(
     devAndPub,
-    'developers',
+    "developers",
     where,
-    ['=']
+    ["="]
   );
 
   const publishersQuery = queryBuilder.createSelectQuery(
     devAndPub,
-    'publishers',
+    "publishers",
     where,
-    ['=']
+    ["="]
   );
 
   const favouritesQuery = queryBuilder.createSelectQuery(
     gamesAndFav,
-    'favourites',
+    "favourites",
     where,
-    ['=']
+    ["="]
   );
 
   db.query(queryId, [nick], (errId, resultId) => {
@@ -455,13 +456,13 @@ app.get('/my-games/:userNick', (req, res) => {
   });
 });
 
-app.get('/get_comments/:gameId', (req, res) => {
+app.get("/get_comments/:gameId", (req, res) => {
   const gameId = req.params.gameId;
   const query = queryBuilder.createSelectQuery(
-    ['idcomments', 'content', 'users_name'],
-    'comments',
-    ['game_id'],
-    ['=']
+    ["idcomments", "content", "users_name"],
+    "comments",
+    ["game_id"],
+    ["="]
   );
   db.query(query, [gameId], (err, result) => {
     // res.send(!Boolean(result.length));
@@ -469,19 +470,19 @@ app.get('/get_comments/:gameId', (req, res) => {
   });
 });
 
-app.post('/add_comment', (req, res) => {
+app.post("/add_comment", (req, res) => {
   const { content, game_id, user_name } = req.body;
   const getIdQuery = queryBuilder.createSelectQuery(
-    ['id'],
-    'users',
-    ['nick'],
-    ['=']
+    ["id"],
+    "users",
+    ["nick"],
+    ["="]
   );
-  const addCommentQuery = queryBuilder.createInsertQuery('comments', [
-    'content',
-    'game_id',
-    'users_name',
-    'users_id',
+  const addCommentQuery = queryBuilder.createInsertQuery("comments", [
+    "content",
+    "game_id",
+    "users_name",
+    "users_id",
   ]);
 
   db.query(getIdQuery, [user_name], (errGetId, resultGetId) => {
