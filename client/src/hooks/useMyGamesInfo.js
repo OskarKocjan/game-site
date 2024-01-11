@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import ResultsList from '../components/ResultsList';
-import Axios from 'axios';
+import React, { useEffect, useState } from "react";
+import ResultsList from "../components/ResultsList";
+import Axios from "axios";
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = "https://game-site-api.vercel.app";
 
 const LIST_TYPE = {
-  Games: 'Games',
-  Devs: 'Developers',
-  Publishers: 'Publishers',
-  Favourites: 'Favourites',
+  Games: "Games",
+  Devs: "Developers",
+  Publishers: "Publishers",
+  Favourites: "Favourites",
 };
 
 const useMyGamesInfo = (nick, isLogged) => {
@@ -65,7 +65,7 @@ const useMyGamesInfo = (nick, isLogged) => {
           setFavourites(filterOut(favourites, name));
           break;
         default:
-          console.log('nothing');
+          console.log("nothing");
       }
     });
   };

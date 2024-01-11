@@ -1,20 +1,20 @@
-import React, { useEffect, useContext, useState } from 'react';
-import gameImg from '../assets/game-pad.png';
-import '../styles/myGames.scss';
-import '../styles/modal.scss';
-import Axios from 'axios';
-import { StoreContext } from '../store/StoreProvider';
-import useMyGamesInfo from '../hooks/useMyGamesInfo';
-import GameChangeRateModal from '../components/GameChangeRateModal';
+import React, { useEffect, useContext, useState } from "react";
+import gameImg from "../assets/game-pad.png";
+import "../styles/myGames.scss";
+import "../styles/modal.scss";
+import Axios from "axios";
+import { StoreContext } from "../store/StoreProvider";
+import useMyGamesInfo from "../hooks/useMyGamesInfo";
+import GameChangeRateModal from "../components/GameChangeRateModal";
 
 const LIST_TYPE = {
-  Games: 'Games',
-  Devs: 'Developers',
-  Publishers: 'Publishers',
-  Favourites: 'Favourites',
+  Games: "Games",
+  Devs: "Developers",
+  Publishers: "Publishers",
+  Favourites: "Favourites",
 };
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = "https://game-site-api.vercel.app";
 
 const MyGamesPage = () => {
   const { userData } = useContext(StoreContext);
@@ -26,9 +26,9 @@ const MyGamesPage = () => {
   console.log(developers);
 
   useEffect(() => {
-    console.log('game title changed');
+    console.log("game title changed");
   }, [myGames, developers, publishers, favourites]);
-  const [current, setCurrent] = useState('Games');
+  const [current, setCurrent] = useState("Games");
   const [chosenRecord, setChosenRecord] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currRate, setCurrRate] = useState(0);
@@ -161,13 +161,13 @@ const MyGamesPage = () => {
             <p className='results-game-miniature'>Minature</p>
             <p className='results-title'>
               {current === LIST_TYPE.Games || current === LIST_TYPE.Favourites
-                ? 'Title'
-                : 'Name'}
+                ? "Title"
+                : "Name"}
             </p>
             <p className='results-game-status'>
               {current === LIST_TYPE.Games || current === LIST_TYPE.Favourites
-                ? 'Status'
-                : 'Slug'}
+                ? "Status"
+                : "Slug"}
             </p>
             <p className='results-game-rate'>Rate</p>
           </div>

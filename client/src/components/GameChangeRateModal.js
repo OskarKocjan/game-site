@@ -1,9 +1,9 @@
-import Axios from 'axios';
-import React, { useContext, useState, useEffect } from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import { StoreContext } from '../store/StoreProvider';
+import Axios from "axios";
+import React, { useContext, useState, useEffect } from "react";
+import { Modal, Button } from "react-bootstrap";
+import { StoreContext } from "../store/StoreProvider";
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = "https://game-site-api.vercel.app";
 
 const GameChangeRateModal = ({
   show,
@@ -51,7 +51,7 @@ const GameChangeRateModal = ({
           <img
             src='https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/icons-mint-individual-81_2.jpg?w=1000&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=7a6bc3c6c3975085365c7f1fca7757b7'
             alt='star'
-          />{' '}
+          />{" "}
           <span>{rateTochange}</span>
           <select
             id='add_anime_score'
@@ -62,17 +62,17 @@ const GameChangeRateModal = ({
               setRateTochange(parseFloat(e.target.value));
             }}
           >
-            <option value={rateTochange}>Change score</option>{' '}
-            <option value='5.0'>(5.0) The Best</option>{' '}
-            <option value='4.5'>(4.5) Masterpiece</option>{' '}
-            <option value='4.0'>(4.0) Great</option>{' '}
-            <option value='3.5'>(3.5) Very Good</option>{' '}
-            <option value='3.0'>(3.0) Good</option>{' '}
-            <option value='2.5'>(2.5) Fine</option>{' '}
-            <option value='2.0'>(2.0) Average</option>{' '}
-            <option value='1.5'>(1.5) Bad</option>{' '}
-            <option value='1.0'>(1.0) Very Bad</option>{' '}
-            <option value='0.5'>(0.5) Horrible</option>{' '}
+            <option value={rateTochange}>Change score</option>{" "}
+            <option value='5.0'>(5.0) The Best</option>{" "}
+            <option value='4.5'>(4.5) Masterpiece</option>{" "}
+            <option value='4.0'>(4.0) Great</option>{" "}
+            <option value='3.5'>(3.5) Very Good</option>{" "}
+            <option value='3.0'>(3.0) Good</option>{" "}
+            <option value='2.5'>(2.5) Fine</option>{" "}
+            <option value='2.0'>(2.0) Average</option>{" "}
+            <option value='1.5'>(1.5) Bad</option>{" "}
+            <option value='1.0'>(1.0) Very Bad</option>{" "}
+            <option value='0.5'>(0.5) Horrible</option>{" "}
             <option value='0.0'>(0) Appalling</option>
           </select>
         </div>

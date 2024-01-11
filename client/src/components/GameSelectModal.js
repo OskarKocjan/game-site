@@ -1,11 +1,11 @@
-import Axios from 'axios';
-import React, { useContext, useState, useEffect } from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import { StoreContext } from '../store/StoreProvider';
-import '../styles/modal.scss';
+import Axios from "axios";
+import React, { useContext, useState, useEffect } from "react";
+import { Modal, Button } from "react-bootstrap";
+import { StoreContext } from "../store/StoreProvider";
+import "../styles/modal.scss";
 // import { userData } from '../pages/LoginPage';
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = "https://game-site-api.vercel.app";
 
 const GameSelectModal = ({
   show,
@@ -19,17 +19,17 @@ const GameSelectModal = ({
 
   const [devStatus, setDevStatus] = useState(true);
   const [publisherStatus, setPublisherStatus] = useState(true);
-  const [devStatusText, setDevStatusText] = useState('none');
-  const [publisherStatusText, setPublisherStatusText] = useState('none');
+  const [devStatusText, setDevStatusText] = useState("none");
+  const [publisherStatusText, setPublisherStatusText] = useState("none");
   const [change, setChange] = useState(false);
   const [comments, setComments] = useState([]);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
 
   useEffect(() => {
     setDevStatus(true);
     setPublisherStatus(true);
-    setDevStatusText('none');
-    setPublisherStatusText('none');
+    setDevStatusText("none");
+    setPublisherStatusText("none");
     chosenGame && getComments();
     console.log(chosenGame);
   }, [chosenGame]);
@@ -56,20 +56,20 @@ const GameSelectModal = ({
     Axios.post(`${BASE_URL}/add_game`, {
       img: image,
       title: name,
-      status: 'Played',
+      status: "Played",
       rate: chosenGame.rating,
       nick: userData.nick,
       tableName: table,
-      slug: name.replace(/\s/g, '-').toLowerCase(),
+      slug: name.replace(/\s/g, "-").toLowerCase(),
     }).then((res) => {
-      console.log('handle Adding ');
+      console.log("handle Adding ");
       console.log(res.data);
       let tableNameGames;
       let objToPush = {};
       const { img, title, finalStatus, rate, tableName } = res.data;
-      if (tableName === 'games') tableNameGames = 'myGames';
+      if (tableName === "games") tableNameGames = "myGames";
 
-      if (tableName === 'games' || tableName === 'favourites') {
+      if (tableName === "games" || tableName === "favourites") {
         objToPush = {
           image: img,
           title: title,
@@ -93,7 +93,7 @@ const GameSelectModal = ({
   const addOrRemove = (table, name, image) => {
     let tableName;
     let item;
-    if (table === 'games') tableName = 'myGames';
+    if (table === "games") tableName = "myGames";
     console.log(table);
     if ((item = contains(myGameLists[tableName || table], name))) {
       deleteFunc(item, table[0].toUpperCase() + table.slice(1));
@@ -103,19 +103,19 @@ const GameSelectModal = ({
   };
 
   const changeState = (option) => {
-    if (option === 'dev') {
+    if (option === "dev") {
       setDevStatus(!devStatus);
       if (devStatus) {
-        setDevStatusText('block');
+        setDevStatusText("block");
       } else {
-        setDevStatusText('none');
+        setDevStatusText("none");
       }
     } else {
       setPublisherStatus(!publisherStatus);
       if (publisherStatus) {
-        setPublisherStatusText('block');
+        setPublisherStatusText("block");
       } else {
-        setPublisherStatusText('none');
+        setPublisherStatusText("none");
       }
     }
   };
@@ -139,7 +139,7 @@ const GameSelectModal = ({
             key={p.name}
             onClick={() => addOrRemove(props, p.name, p.image_background)}
           >
-            {contains(myGameLists[props], p.name) ? 'Remove ' : 'Add '}
+            {contains(myGameLists[props], p.name) ? "Remove " : "Add "}
             {p.name}
           </li>
         ))}
@@ -177,42 +177,42 @@ const GameSelectModal = ({
                       className='add_p'
                       onClick={() =>
                         addOrRemove(
-                          'games',
+                          "games",
                           chosenGame.name,
                           chosenGame.background_image
                         )
                       }
                     >
                       {contains(myGameLists.myGames, chosenGame.name)
-                        ? 'Remove game from list'
-                        : 'Add to game list'}
+                        ? "Remove game from list"
+                        : "Add to game list"}
                     </p>
 
-                    <p className='add_p' onClick={() => changeState('dev')}>
+                    <p className='add_p' onClick={() => changeState("dev")}>
                       Developer list
                     </p>
                     <div style={{ display: devStatusText }}>
-                      {ListOfpropsToSend('developers')}
+                      {ListOfpropsToSend("developers")}
                     </div>
-                    <p className='add_p' onClick={() => changeState('pub')}>
+                    <p className='add_p' onClick={() => changeState("pub")}>
                       Publisher list
                     </p>
                     <div style={{ display: publisherStatusText }}>
-                      {ListOfpropsToSend('publishers')}
+                      {ListOfpropsToSend("publishers")}
                     </div>
                     <p
                       className='add_p'
                       onClick={() =>
                         addOrRemove(
-                          'favourites',
+                          "favourites",
                           chosenGame.name,
                           chosenGame.background_image
                         )
                       }
                     >
                       {contains(myGameLists.favourites, chosenGame.name)
-                        ? 'Remove game from favourites'
-                        : 'Add to game favourites'}
+                        ? "Remove game from favourites"
+                        : "Add to game favourites"}
                     </p>
                   </>
                 )}
@@ -221,7 +221,7 @@ const GameSelectModal = ({
                   <img
                     src='https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/icons-mint-individual-81_2.jpg?w=1000&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=7a6bc3c6c3975085365c7f1fca7757b7'
                     alt='star'
-                  />{' '}
+                  />{" "}
                   {chosenGame.rating}
                 </p>
               </div>
@@ -229,11 +229,11 @@ const GameSelectModal = ({
                 <h4>Description</h4>
                 <p>{chosenGame.description_raw}</p>
                 <h4>Genres</h4>
-                {ListOfprops('genres')}
+                {ListOfprops("genres")}
                 <h4>Developers</h4>
-                {ListOfprops('developers')}
+                {ListOfprops("developers")}
                 <h4>Publishers</h4>
-                {ListOfprops('publishers')}
+                {ListOfprops("publishers")}
                 <h4>Released data</h4>
                 <p>{chosenGame.released}</p>
                 <h4>Available platforms</h4>
@@ -275,7 +275,7 @@ const GameSelectModal = ({
                       const { idcomments, content, users_name } = comment;
                       return (
                         <li key={idcomments}>
-                          {users_name} : {content}{' '}
+                          {users_name} : {content}{" "}
                         </li>
                       );
                     })}

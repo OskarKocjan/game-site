@@ -7,7 +7,7 @@ import Axios from "axios";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://game-site-api.vercel.app";
 
 export default function ProfilePage() {
   const navigate = useNavigate();

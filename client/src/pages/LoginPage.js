@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { StoreContext } from "../store/StoreProvider";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://game-site-api.vercel.app";
 
 const LoginPage = () => {
   let navigate = useNavigate();
