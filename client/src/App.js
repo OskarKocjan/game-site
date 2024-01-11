@@ -7,9 +7,7 @@ import Menu from "./components/Menu";
 import ESportPage from "./pages/ESportPage";
 import MyGamesPage from "./pages/MyGamesPage";
 import ProfilePage from "./pages/ProfilePage";
-import SelectedESportPage from "./pages/SelectedESportPage";
 import { StoreContext } from "./store/StoreProvider";
-import { getAllNamesFromEsportString } from "./helpingFunctions/dataFuntions";
 
 const App = () => {
   const { userData } = useContext(StoreContext);
@@ -28,12 +26,12 @@ const App = () => {
             path={`/edit/profile/${userData.nick}`}
             element={<ProfilePage />}
           />
-          <Route
+          {/* <Route
             path={`/e-sport/${getAllNamesFromEsportString(
               "slug"
             )}/(players|teams|leagues|info)`}
             element={<SelectedESportPage />}
-          />
+          /> */}
           <Route path={`/e-sport`} element={<ESportPage />} />
           <Route path='/' exact='true' element={<MainPage />} />
           {userData && userData.isLogged && userData.auth ? (

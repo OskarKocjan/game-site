@@ -26,13 +26,18 @@ const LoginPage = () => {
       email: values.emailReg,
       nick: values.nick,
       password: values.passwordReg,
-    }).then((res) => {
-      if (res.status === 200) {
-        setRegisterStatus(res.data.message);
-        setRegResponseDissapear(false);
-        setTimeout(() => setRegResponseDissapear(true), 2000);
-      }
-    });
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          setRegisterStatus(res.data.message);
+          setRegResponseDissapear(false);
+          setTimeout(() => setRegResponseDissapear(true), 2000);
+        }
+      })
+      .catch(function (error) {
+        console.log("Show error notification!");
+        return Promise.reject(error);
+      });
   };
 
   const handleLogin = (values) => {

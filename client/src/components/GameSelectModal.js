@@ -38,7 +38,7 @@ const GameSelectModal = ({
 
   const getComments = () => {
     Axios.get(`${BASE_URL}/get_comments/${chosenGame.id}`).then((res) => {
-      setComments(res.data);
+      setComments(res.data || []);
     });
   };
 
